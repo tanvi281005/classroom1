@@ -1,0 +1,49 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2024-25 Calendar</title>
+    <style>
+        body {
+            background-color: #1c2b35;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .calendar-container {
+            padding: 20px;
+        }
+        .calendar-container h1 {
+            margin-bottom: 20px;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+        .calendar-grid img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="calendar-container">
+        <h1>2024-25 Calendar</h1>
+        <div class="calendar-grid">
+            {% for month in months %}
+                <img src="{% static 'classroomsmall/'|add:month|add:'.png' %}" alt="Calendar for {{ month }}">
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

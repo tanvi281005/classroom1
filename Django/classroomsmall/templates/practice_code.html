@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice Code</title>
+    <style>
+        
+        body {
+            color: #1e2d3b;
+            background-color: rgb(249, 238, 225);
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1, h3 {
+            color: #1e2d3b;
+        }
+        select, textarea, button {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #1e2d3b;
+            border-radius: 4px;
+        }
+        textarea {
+            height: 150px;
+            resize: vertical;
+        }
+        button {
+            background-color: #1e2d3b;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #163040;
+        }
+        #output {
+            border: 1px solid #1e2d3b;
+            padding: 10px;
+            background-color: white;
+            min-height: 50px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    
+    </style>
+</head>
+<body>
+    <h1>Practice Code</h1>
+
+    <label for="language">Select Language:</label>
+    <select id="language">
+        <option value="java">Java</option>
+        <option value="c">C</option>
+        <option value="cpp">C++</option>
+    </select>
+
+    <label for="code">Code:</label>
+    <textarea id="code" placeholder="Write your code here..."></textarea>
+    
+   
+    <label for="inputs">Inputs:</label>
+    <textarea id="inputs" placeholder="Enter inputs for your program (one per line)..."></textarea>
+    
+    <button id="run">Run Code</button>
+
+    <button id="save">Save Code</button>
+
+    <h3>Output:</h3>
+    <pre id="output">Output will appear here...</pre>
+
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrfToken = getCookie('csrftoken');
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("run").addEventListener("click", function() {
+                const language = document.getElementById("language").value;
+                const code = document.getElementById("code").value;
+                const inputs = document.getElementById("inputs").value;
+                
+                fetch('/classroomsmall/run_code/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({ code: code, language: language, inputs: inputs })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById("output").innerText = "Error: " + data.error;
+                    } else {
+                        document.getElementById("output").innerText = "Output:\n" + data.output;
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch Error:', error);
+                    document.getElementById("output").innerText = "Error executing code.";
+                });
+            });
+
+            document.getElementById("save").addEventListener("click", function() {
+                const language = document.getElementById("language").value;
+                const code = document.getElementById("code").value;
+        
+                fetch('/classroomsmall/save_code/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({ language: language, code: code })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert("Error: " + data.error);
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

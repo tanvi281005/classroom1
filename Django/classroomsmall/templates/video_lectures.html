@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Video Lectures</title>
+    <style>
+        body {
+            background-color: #1c2b35; 
+            color: white; 
+            font-family: Arial, sans-serif; 
+        }
+        h1 {
+            text-align: center; 
+        }
+        .course-videos { 
+            margin-bottom: 20px; 
+            text-align: center; 
+        }
+        .video { 
+            margin: 10px; 
+            display: inline-block; 
+            text-align: center; 
+            width: 30%; 
+            background-color: rgb(249, 238, 225); 
+            border-radius: 8px; 
+            padding: 10px; 
+        }
+        .thumbnail { 
+            width: 100%; 
+        }
+        .upload-button { 
+            position: absolute; 
+            top: 20px; 
+            right: 20px; 
+            background-color:  rgb(249, 238, 225); 
+            color: black; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+        }
+        .upload-button:hover {
+            background-color: #0056b3; 
+        }
+        p { 
+            color: black; 
+            margin-top: 5px; 
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ teacher.teacher_name }}'s Video Lectures</h1>
+    <a href="{% url 'upload_video' teacher_id=teacher_id %}" class="upload-button">Upload Video</a>
+
+    {% if video_lectures %}
+        {% for course, videos in video_lectures.items %}
+            <div class="course-videos">
+                <h2>{{ course }}</h2>
+                <div style="display: flex; flex-wrap: wrap; justify-content: center;"> 
+                    {% for video in videos %}
+                        <div class="video">
+                            <iframe width="100%" height="200" src="https://www.youtube.com/embed/{{ video.url|slice:'-11:' }}" frameborder="0" allowfullscreen></iframe>
+                            <p>{{ video.title }}</p> 
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No video lectures found.</p>
+    {% endif %}
+</body>
+</html>

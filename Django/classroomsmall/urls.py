@@ -1,0 +1,36 @@
+from django.urls import path,include
+from . import views
+from .views import StudentVideosView
+from .views import StudentStudyMaterialsView
+urlpatterns = [
+     path('', views.index, name='index'),
+     path('login_teacher/', views.login_teacher, name='login_teacher'),
+     path('login_student/', views.login_student, name='login_student'),
+     path('login_teacher/teacher_portal/', views.teacher_portal, name='teacher_portal'),
+     path('login_student/classroom/', views.classroom, name='classroom'),
+     path('login_student/classroom/student/<str:student_id>/', views.student_info, name='student_info'),
+     path('login_student/classroom/classes/', views.classes, name='classes'),
+     path('login_student/classroom/teachers/', views.teachers, name='teachers'),
+     path('calendar/2022-23/', views.calendar_page, name='calendar_page_2022'),
+     path('calendar/2023-24/', views.calendar_page23, name='calendar_page_2023'),
+     path('calendar/2024-25/', views.calendar_2024_25, name='calendar_2024_25'), 
+     path('login_student/classroom/whiteboard', views.whiteboard, name='whiteboard'),
+     path('login_student/classroom/wellness-resources/', views.wellness_resources, name='wellness_resources'),
+     path('login_student/classroom/practice/', views.practice_code, name='practice_code'),
+     path('practice/save/', views.save_code, name='save_code'),
+     path('run_code/', views.run_code, name='run_code'),
+     path('teacher/<int:teacher_id>/videos/', views.video_lectures, name='video_lectures'),
+     path('teacher/<int:teacher_id>/upload_video/', views.upload_video, name='upload_video'),
+     path('teacher/<int:teacher_id>/upload_material/', views.upload_material, name='upload_material'),
+     path('teacher/<int:teacher_id>/materials/', views.study_materials, name='study_materials'),
+     path('videos/<int:course_id>/', StudentVideosView.as_view(), name='student_videos'),
+     path('courses/<int:course_id>/study-materials/', StudentStudyMaterialsView.as_view(), name='student_study_materials'),
+     path('assignments/<int:course_id>/', views.assignments, name='assignments'),
+     path('login_teacher/teacher_portal/teacherprofile/<int:teacher_id>/', views.teacherprofile, name='teacherprofile'),
+     path('upload_assignment/<int:course_id>/', views.upload_assignment, name='upload_assignment'),
+     path('courses/<int:course_id>/assignments/', views.course_assignments, name='course_assignments'),
+     path('assignments/<int:assignment_id>/submit/', views.submit_assignment, name='submit_assignment'),
+     path('accounts/', include('allauth.urls')),
+     path('forgot-password/', views.forgot_password, name='forgot_password'),
+     path('forgot-password-teacher/', views.forgot_password_teacher, name='forgot_password_teacher'),
+     ]

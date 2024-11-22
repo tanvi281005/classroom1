@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whiteboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            margin: 20px auto;
+        }
+        h2 {
+            color: #333;
+        }
+        .toolbar {
+            background-color: #333;
+            padding: 10px;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .toolbar button, .toolbar div {
+            margin: 0 10px;
+            padding: 10px;
+            background-color: #555;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .toolbar button:hover {
+            background-color: #777;
+        }
+        .toolbar button.active {
+            background-color: #4CAF50;
+        }
+        .color-palette {
+            display: flex;
+            gap: 5px;
+        }
+        .color-swatch {
+            width: 25px; 
+            height: 25px; 
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+        .whiteboard-container {
+            border: 2px solid #ccc;
+            background-color: white;
+            position: relative;
+        }
+        #whiteboard {
+            width: 100%;
+            height: 500px;
+            background-color: white;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button.submit {
+            margin-top: 10px;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button.submit:hover {
+            background-color: #45a049;
+        }
+        .sticky-note {
+            position: absolute;
+            padding: 10px;
+            background-color: yellow;
+            color: black;
+            border: 1px solid #ccc;
+            width: 150px;
+            cursor: move;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Whiteboard</h2>
+
+        <div class="toolbar">
+            <button class="active" id="draw">Draw</button>
+            <button id="text">Text</button>
+            <button id="sticky">Sticky Note</button>
+            <button id="erase">Erase</button>
+
+            <div class="color-palette">
+                <div class="color-swatch" style="background-color: black;" data-color="black"></div>
+                <div class="color-swatch" style="background-color: red;" data-color="red"></div>
+                <div class="color-swatch" style="background-color: blue;" data-color="blue"></div>
+                <div class="color-swatch" style="background-color: green;" data-color="green"></div>
+                <div class="color-swatch" style="background-color: orange;" data-color="orange"></div>
+                <div class="color-swatch" style="background-color: purple;" data-color="purple"></div>
+                <div class="color-swatch" style="background-color: pink;" data-color="pink"></div>
+                <div class="color-swatch" style="background-color: brown;" data-color="brown"></div>
+                <div class="color-swatch" style="background-color: grey;" data-color="grey"></div>
+                <div class="color-swatch" style="background-color: cyan;" data-color="cyan"></div>
+                <div class="color-swatch" style="background-color: yellow;" data-color="yellow"></div>
+            </div>
+
+            <select id="penThickness">
+                <option value="2">Thin</option>
+                <option value="4">Medium</option>
+                <option value="6">Thick</option>
+            </select>
+        </div>
+
+        <div class="whiteboard-container">
+            <canvas id="whiteboard"></canvas>
+        </div>
+
+        <form id="whiteboardForm">
+            <textarea name="content" rows="5" placeholder="Type your rough work here..."></textarea><br>
+            <input type="hidden" name="drawing_data" id="drawingData"> 
+            <button type="button" class="submit" id="resetButton">Reset</button> 
+        </form>     
+    </div>
+     
+    <div class="whiteboard-container">
+        {% for entry in whiteboard %}
+            <div class="entry">
+                <p>{{ entry.content }}</p> 
+                <img src="{{ entry.drawing_data }}" alt="Drawing" style="max-width: 100%; height: auto;"> 
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        const canvas = document.getElementById('whiteboard');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let tool = 'draw'; 
+        let penColor = 'black';
+        let penThickness = 2;
+    
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
+    
+        canvas.addEventListener('mousedown', (e) => {
+            if (tool === 'draw' || tool === 'erase') {
+                isDrawing = true;
+                ctx.beginPath();
+                ctx.moveTo(e.offsetX, e.offsetY);
+                ctx.strokeStyle = penColor; 
+                ctx.lineWidth = penThickness; 
+                if (tool === 'erase') {
+                    ctx.globalCompositeOperation = 'destination-out'; 
+                }
+            }
+        });
+    
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDrawing) {
+                ctx.lineTo(e.offsetX, e.offsetY);
+                ctx.stroke();
+            }
+        });
+    
+        canvas.addEventListener('mouseup', () => {
+            if (isDrawing) {
+                isDrawing = false;
+                ctx.closePath();
+                ctx.globalCompositeOperation = 'source-over'; 
+            }
+        });
+    
+        document.getElementById('erase').addEventListener('click', () => {
+            tool = 'erase';
+            resetActiveButton();
+            document.getElementById('erase').classList.add('active');
+        });
+    
+        document.getElementById('draw').addEventListener('click', () => {
+            tool = 'draw';
+            resetActiveButton();
+            document.getElementById('draw').classList.add('active');
+        });
+    
+        document.getElementById('text').addEventListener('click', () => {
+            tool = 'text';
+            resetActiveButton();
+            document.getElementById('text').classList.add('active');
+            canvas.addEventListener('click', addText);
+        });
+    
+        document.getElementById('sticky').addEventListener('click', () => {
+            tool = 'sticky';
+            resetActiveButton();
+            document.getElementById('sticky').classList.add('active');
+            canvas.addEventListener('click', addStickyNote, { once: true });
+        });
+    
+        function addText(e) {
+            const text = prompt('Enter text:');
+            if (text) {
+                ctx.font = '16px Arial';
+                ctx.fillStyle = penColor; 
+                ctx.fillText(text, e.offsetX, e.offsetY);
+            }
+            canvas.removeEventListener('click', addText); 
+        }
+    
+        function addStickyNote(e) {
+            if (tool === 'sticky') {
+                const note = document.createElement('div');
+                note.className = 'sticky-note';
+                note.style.left = `${e.offsetX}px`;
+                note.style.top = `${e.offsetY}px`;
+                note.contentEditable = true; 
+                note.innerText = 'Sticky note content';
+                document.body.appendChild(note);
+                makeDraggable(note);
+                note.focus(); 
+            }
+        }
+    
+        function clearWhiteboard() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); 
+        const stickyNotes = document.querySelectorAll('.sticky-note');
+        stickyNotes.forEach(note => note.remove()); 
+        document.querySelector('textarea[name="content"]').value = ''; 
+    }
+    
+       
+        function makeDraggable(element) {
+            let offsetX = 0, offsetY = 0, mouseX = 0, mouseY = 0;
+    
+            element.onmousedown = function(e) {
+                e.preventDefault();
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+    
+                document.onmousemove = function(e) {
+                    e.preventDefault();
+                    offsetX = mouseX - e.clientX;
+                    offsetY = mouseY - e.clientY;
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+                    element.style.top = `${element.offsetTop - offsetY}px`;
+                    element.style.left = `${element.offsetLeft - offsetX}px`;
+                };
+    
+                document.onmouseup = function() {
+                    document.onmouseup = null;
+                    document.onmousemove = null;
+                };
+            };
+        }
+    
+        const colorSwatches = document.querySelectorAll('.color-swatch');
+        colorSwatches.forEach(swatch => {
+            swatch.addEventListener('click', (e) => {
+                penColor = e.target.dataset.color; 
+                resetActiveButton();
+                e.target.classList.add('active');
+            });
+        });
+    
+        document.getElementById('penThickness').addEventListener('change', (e) => {
+            penThickness = e.target.value;
+        });
+    
+        function resetActiveButton() {
+            const buttons = document.querySelectorAll('.toolbar button');
+            buttons.forEach((button) => {
+                button.classList.remove('active');
+            });
+        }
+        document.getElementById('resetButton').addEventListener('click', clearWhiteboard);
+    </script>
+    
+</body>
+</html>

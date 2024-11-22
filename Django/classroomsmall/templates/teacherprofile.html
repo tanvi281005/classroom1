@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Profile Page</title>
+    {% load static %}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e2d3b; 
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-img img {
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border: 4px solid #1e2d3b;
+            margin-right: 20px;
+        }
+
+        .profile-info h2 {
+            font-size: 1.5rem;
+            color: #1e2d3b;
+        }
+
+        .profile-info p {
+            margin-top: 10px;  
+            margin-bottom: 10px; 
+            font-size: 1rem;
+            color: black;  
+        }
+
+        .info-section {
+            background-color: rgb(249, 238, 225);  
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .info-section h3 {
+            color: #1e2d3b;
+            margin-bottom: 10px;
+            font-size: larger;
+            font-family: "Times New Roman", Times, serif;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        table td {
+            padding: 8px 0;
+        }
+
+        table td:first-child {
+            font-weight: bold;
+            color: #1e2d3b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="profile-section">
+            <div class="profile-info">
+                <h2>{{ teacher.teacher_name }}</h2>
+                <p><strong>Email:</strong> {{ teacher.email }}</p>
+                <p><strong>Contact:</strong> {{ teacher.contact }}</p>
+                <p><strong>Specialization:</strong> {{ teacher.specialization }}</p>
+            </div>
+        </div>
+        
+        <div class="info-section">
+            <h3>COURSES TAUGHT</h3>
+            <table>
+                {% for course_teaching in courses %}
+                <tr>
+                    <td><strong>Course Name</strong></td>
+                    <td>: {{ course_teaching.course.course_name }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Number of Students Enrolled</strong></td>
+                    <td>: {{ course_teaching.course.enrollment_set.count }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2">No courses taught by this teacher.</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        
+    </div>
+</body>
+</html>

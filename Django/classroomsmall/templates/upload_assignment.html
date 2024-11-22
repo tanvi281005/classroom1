@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Assignment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e2d3b; 
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #fff;
+            font-family: 'Times New Roman', Times, serif;
+        }
+        .form-container {
+            background-color: rgb(249, 238, 225); 
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        input[type="text"], input[type="date"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #1e2d3b; 
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2b3e50; 
+        }
+    </style>
+    <script>
+      
+        function handleFormSubmission(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+    
+            fetch("{% url 'upload_assignment' course_id=course.course_id %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(errorText => {
+                        console.error("Error response text:", errorText);
+                        throw new Error("Unexpected response from the server.");
+                    });
+                }
+                return response.json(); 
+            })
+            .then(data => {
+                if (data.success) {
+                    alert("Assignment uploaded successfully!");
+                    event.target.reset();
+                    
+                    window.location.href = "{% url 'assignments' course_id=course.course_id %}"; 
+                } else {
+                    alert("Error uploading assignment: " + JSON.stringify(data.errors));
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred: " + error.message);
+            });
+        }
+
+        function setMinDate() {
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0]; 
+            document.getElementById('due_date').setAttribute('min', formattedDate);
+        }
+        
+        window.onload = setMinDate;
+    </script>
+</head>
+<body>
+
+    <h1>Upload New Assignment</h1>
+    <div class="form-container">
+        <form method="POST" action="{% url 'upload_assignment' course_id=course.course_id %}" enctype="multipart/form-data" onsubmit="handleFormSubmission(event)">
+            {% csrf_token %}
+            
+            <div>
+                <label for="title">Title:</label>
+                {{ form.title }} 
+            </div>
+            
+            <div>
+                <label for="description">Description:</label>
+                {{ form.description }}
+            </div>
+            
+            <div>
+                <label for="assignment_file">Upload File:</label>
+                {{ form.assignment_file }} 
+            </div>
+            
+            <div>
+                <label for="due_date">Due Date:</label>
+                <input type="date" id="due_date" name="due_date" value="{{ form.due_date.value|default:'' }}" required> 
+            </div>
+            
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VirtuClass</title>
+    <style>
+        body {
+            background-color: #2b3e50;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        h1 {
+            margin-bottom: 40px;
+            font-size: 50px;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .login-options {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .login-button {
+            padding: 15px 30px;
+            background-color: rgb(249, 238, 225);
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none; 
+            font-size: 16px;
+        }
+
+        .login-button:hover {
+            background-color: #1c2b35;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to VirtuClass</h1>
+    <div class="login-options">
+        <a href="{% url 'login_teacher' %}" class="login-button">Login as Teacher</a>
+        <a href="{% url 'login_student' %}" class="login-button">Login as Student</a>
+    </div>
+</body>
+</html>

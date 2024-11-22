@@ -1,0 +1,116 @@
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignments for {{ course.course_name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e2d3b;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #fff;
+            text-align: center;
+        }
+        #assignments-list {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .assignment-item {
+            background-color: rgb(249, 238, 225);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+            width: 80%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .assignment-item h3 {
+            margin: 0;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        button {
+            background-color: #1e2d3b;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0f1c27;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Assignments for {{ course.course_name }}</h1>
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+ 
+    <div id="assignments-list">
+        {% for assignment in assignments %}
+        <div class="assignment-item">
+            <h3>{{ assignment.title }}</h3>
+            <p><strong>Description:</strong> {{ assignment.description }}</p>
+            <p><strong>Due Date:</strong> {{ assignment.due_date|date:"Y-m-d" }}</p>
+            <p><strong>Question PDF:</strong> <a href="{{ assignment.assignment_file.url }}">Download</a></p>
+
+            {% with student_assignment=student_submissions|get_item:assignment.id %}
+                {% if student_assignment %}
+                    {% if student_assignment.submission_file %}
+                        <p><strong>Your Submission:</strong> <a href="{{ student_assignment.submission_file.url }}">View Submission</a></p>
+                    {% else %}
+                        <p><strong>Your Submission:</strong> No file submitted.</p>
+                    {% endif %}
+                    <button type="button" disabled>Submitted</button>
+                {% else %}
+                    {% if current_date > assignment.due_date %}
+                        <p><strong>Submission closed for this assignment.</strong></p>
+                        <button type="button" disabled>Submission Closed</button>
+                    {% else %}
+                        <form method="POST" enctype="multipart/form-data" action="{% url 'submit_assignment' assignment.id %}">
+                            {% csrf_token %}
+                            <label for="submission_file">Upload Submission PDF:</label>
+                            <input type="file" name="submission_file" required>
+                            <button type="submit">Submit</button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        {% empty %}
+            <p>No assignments available for this course.</p>
+        {% endfor %}
+    </div>
+    
+</body>
+</html>

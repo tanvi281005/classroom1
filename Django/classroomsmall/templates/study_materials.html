@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Study Materials</title>
+    <style>
+        body {
+            background-color: #1c2b35; 
+            color: white; 
+            font-family: Arial, sans-serif;
+            text-align: center; 
+        }
+        h1 {
+            margin-bottom: 20px; 
+        }
+        .course-materials { 
+            margin-bottom: 20px; 
+            text-align: center; 
+        }
+        a {
+            color: rgb(249, 238, 225);
+            text-decoration: none; 
+        }
+        a:hover {
+            text-decoration: underline; 
+        }
+        .upload-button {
+            position: absolute; 
+            top: 20px; 
+            right: 20px; 
+            background-color:  rgb(249, 238, 225);
+            color: black; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+        }
+        .upload-button:hover {
+            background-color: #0056b3; 
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ teacher.teacher_name }}'s Study Materials</h1>
+    <a href="{% url 'upload_material' teacher_id=teacher_id %}" class="upload-button">Upload Material</a>
+
+    {% if study_materials %}
+        {% for course, materials in study_materials.items %}
+            <div class="course-materials">
+                <h2>{{ course }}</h2>
+                <ul style="list-style-type: none; padding: 0;"> 
+                    {% for material in materials %}
+                        <li style="margin: 10px 0;"><a href="{{ material.url }}">{{ material.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No study materials found.</p>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignments for {{ course.course_name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e2d3b;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #fff;
+        }
+        .assignment-list {
+            margin-top: 20px;
+        }
+        .assignment-item {
+            background-color: rgb(249, 238, 225);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        .upload-button {
+            display: inline-block;
+            background-color: rgb(249, 238, 225);
+            color: #1e2d3b;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+        .upload-button:hover {
+            background-color: #f4c2b4;
+        }
+        .assignment-header {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Assignments for {{ course.course_name }}</h1>
+
+    <a href="{% url 'upload_assignment' course_id=course.course_id %}" class="upload-button">Upload New Assignment</a>
+
+    <div class="assignment-list" id="assignments-list">
+        {% if assignments %}
+            <h2>Assignments</h2>
+            {% for assignment in assignments %}
+                <div class="assignment-item" id="assignment-{{ assignment.id }}">
+                    <div class="assignment-header">Assignment: {{ assignment.title }}</div>
+                    <div><strong>Description:</strong> {{ assignment.description }}</div>
+                    <div><strong>Due Date:</strong> {{ assignment.due_date|date:"Y-m-d" }}</div>
+                    <div><strong>File:</strong> <a href="{{ assignment.assignment_file.url }}">Download Assignment</a></div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No assignments available for this course yet.</p>
+        {% endif %}
+        
+        <h2>Submitted Assignments</h2>
+        {% if submitted_assignments %}
+            {% for submission in submitted_assignments %}
+                <div class="assignment-item">
+                    <div>
+                        <strong>Assignment:</strong> {{ submission.assignment.title }}<br>
+                        <strong>Submitted by:</strong> {{ submission.student.student_name }}<br>
+                        <strong>Submission Date:</strong> {{ submission.submission_date|date:"Y-m-d" }}<br>
+                        <strong>Status:</strong> {{ submission.submission_status }}<br>
+                        {% if submission.submission_file %}
+                            <strong>Submitted File:</strong> <a href="{{ submission.submission_file.url }}">View Submission</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No assignments submitted yet for this course.</p>
+        {% endif %}
+    </div>
+    <script>
+        document.querySelectorAll('.submit-grade-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const submissionId = this.dataset.submissionId; // Assuming you have a data attribute for submission ID
+                const grade = this.parentElement.querySelector('.grade-input').value; // Assuming you have an input field for grade
+    
+                fetch(`/grade_submission/${submissionId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken') // Include CSRF token
+                    },
+                    body: JSON.stringify({ grade: grade }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert("Grade submitted successfully!");
+                        const submissionElement = document.getElementById(`assignment-${submissionId}`); // Correct reference to the assignment item
+                        submissionElement.querySelector('.grade-input').innerHTML = `<strong>Grade:</strong> ${grade}`; // Show the grade
+                        submissionElement.querySelector('.submission-status').textContent = 'Graded'; // Update status in the DOM
+                    } else {
+                        alert("Error submitting grade.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        });
+    
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Check if this cookie string begins with the desired name
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+    
+    
+
+</body>
+</html>

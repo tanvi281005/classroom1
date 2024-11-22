@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subjects</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2b3e50;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        h1{
+         color: white;
+         font-family: 'Times New Roman', Times, serif;
+        }
+        .subject-container {
+            display: flex;
+            flex-direction: column; 
+            gap: 20px;
+        }
+
+        .subject-box {
+            background-color: rgb(249, 238, 225);
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            width: 100%; 
+            position: relative;
+            height: auto;
+        }
+
+        .dropdown {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .dropdown-content {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 10px 0;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown.active .arrow {
+            transform: rotate(180deg); 
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Subject List</h1>
+    <div class="subject-container">
+        {% if courses_with_resources %}
+            {% for course_data in courses_with_resources %}
+                <div class="subject-box">
+                    <h2>{{ course_data.course.course_name }}</h2>
+                    <div class="dropdown">
+                        <span>Course ID: {{ course_data.course.course_id }}</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="dropdown-content">
+                        {% if course_data.assignments %}
+                            <a href="{% url 'course_assignments' course_id=course_data.course.course_id %}">Assignments</a>
+                        {% endif %}            
+                        {% if course_data.study_materials %}
+                            <a href="{% url 'student_study_materials' course_id=course_data.course.course_id %}">Study Materials</a>
+                        {% endif %}
+                        {% if course_data.video_lectures %}
+                            <a href="{% url 'student_videos' course_id=course_data.course.course_id %}">Video Lectures</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No courses available.</p>
+        {% endif %}
+    </div>
+
+    <script>
+        const dropdowns = document.querySelectorAll('.dropdown');
+
+        dropdowns.forEach(dropdown => {
+            dropdown.addEventListener('click', () => {
+                const content = dropdown.nextElementSibling;
+                const isActive = dropdown.classList.toggle('active');
+
+                if (isActive) {
+                    content.style.display = 'block'; 
+                } else {
+                    content.style.display = 'none'; 
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

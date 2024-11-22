@@ -1,0 +1,405 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>VirtuClass</title>
+        <style>
+            body, html {
+                margin: 0;
+                padding: 0;
+                font-family: Arial, sans-serif;
+            }
+            .navbar {
+                background-color: #2b3e50;
+                padding: 35px 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                color: white;
+            }
+
+            .navbar .logo {
+                font-size: 2.5rem;
+                font-weight: bold;
+            }
+
+            .navbar ul {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+                display: flex;
+            }
+
+            .navbar ul li {
+                margin: 0 15px;
+            }
+
+            .navbar ul li a {
+                color: white;
+                text-decoration: none;
+                font-weight: bold;
+                padding: 5px 10px;
+                font-size: 1.2rem;
+            }
+
+            .navbar ul li a:hover {
+                background-color: #1e2d3b;
+                border-radius: 4px;
+            }
+
+           
+
+.timetable-section {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+    margin: 0 auto 2px auto;
+    
+}
+
+.timetable-section h2 {
+    text-align: center;
+    font-size: 2rem;
+    color: #2b3e50;
+    margin-bottom: 20px;
+}
+
+.timetable-section table {
+    width: 100%;
+    height : auto;
+    border-collapse: collapse;
+}
+
+.timetable-section th, .timetable-section td {
+    border: 1px solid #ccc;
+    padding: 6px 8px;
+    text-align: left;
+}
+
+.timetable-section th {
+    background-color: #2b3e50;
+    color: white;
+}
+
+.timetable-section tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.timetable-section tr:hover {
+    background-color: #e0e0e0;
+}
+
+
+           
+            .students {
+                padding: 50px 20px;
+                text-align: center;
+            }
+
+            .students h2 {
+                margin-bottom: 30px;
+                font-size: 2.5rem;
+                color: #2a2727;
+                font-family: "Times New Roman", Times, serif;
+            }
+
+            .student1 {
+                display: flex;
+                justify-content: space-around;
+            }
+
+            .student2 {
+                width: 30%;
+                padding: 20px;
+                background-color: #f9f9f9;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .student2 h3 {
+                font-size: 1.5rem;
+                color: #2b3e50;
+                margin-bottom: 10px;
+            }
+
+            .student2 p {
+                color: #e6d3d3;
+            }
+
+            
+            .footer {
+                background-color: #2b3e50;
+                color: white;
+                padding: 40px 20px;
+            }
+
+            .footer .footer-content {
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .footer .footer-content .footer-section {
+                width: 30%;
+            }
+
+            .footer .footer-section h4 {
+                font-size: 1.5rem;
+                margin-bottom: 20px;
+            }
+
+            .footer .footer-section p, .footer .footer-section a {
+                color: white;
+                text-decoration: none;
+                font-size: 0.9rem;
+            }
+
+            .footer .footer-section a:hover {
+                text-decoration: underline;
+            }
+
+            
+            @media screen and (max-width: 768px) {
+                .navbar ul {
+                    flex-direction: column;
+                    text-align: center;
+                }
+
+                .student1 {
+                    flex-direction: column;
+                    align-items: center;
+                }
+
+                .student2 {
+                    width: 80%;
+                    margin-bottom: 20px;
+                }
+
+                .footer .footer-content {
+                    flex-direction: column;
+                    align-items: center;
+                }
+
+                .footer .footer-section {
+                    width: 80%;
+                    margin-bottom: 20px;
+                }
+            }
+            .navbar ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 10px;
+    font-size: 1.2rem;
+    transition: background-color 0.3s ease;
+}
+
+.navbar ul li a.active {
+    background-color: #1e2d3b; 
+    border-radius: 4px;
+    padding: 8px 15px; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+.navbar ul li a:hover {
+    background-color: #1e2d3b;
+    border-radius: 4px;
+}
+.assignment-indicator {
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+            text-decoration: none; 
+        }
+
+        .assignment-indicator.underlined {
+            text-decoration: underline;
+        }
+
+        .assignment-count {
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 5px;
+            font-size: 12px;
+        }
+
+        
+        .popup {
+            display: none; 
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        .popup .close {
+            float: right;
+            cursor: pointer;
+            color: red;
+        }
+
+        .overlay {
+            display: none; 
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        </style>
+        <script>
+            const navLinks = document.querySelectorAll('.navbar ul li a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    navLinks.forEach(item => item.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        
+            const socket = new WebSocket('ws://your-websocket-url/');
+        
+            socket.onopen = function(event) {
+                console.log('WebSocket connection established');
+            };
+        
+            socket.onclose = function(event) {
+                console.log('WebSocket connection closed');
+            };
+        
+            socket.onerror = function(error) {
+                console.error('WebSocket error:', error);
+            };
+        
+            socket.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                const message = data.message;
+        
+                
+                if (data.type === 'assignment_upload') {
+                    updateAssignmentIndicator();
+                    showPopup();
+                }
+        
+                console.log(message);
+            };
+        
+           
+            function showPopup() {
+                document.getElementById('popup').style.display = 'block';
+                document.getElementById('overlay').style.display = 'block';
+            }
+        
+            
+            function closePopup() {
+                document.getElementById('popup').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
+            }
+        
+            
+            function updateAssignmentIndicator() {
+                const assignmentCountElement = document.getElementById('assignmentCount');
+                let currentCount = parseInt(assignmentCountElement.innerText);
+                assignmentCountElement.innerText = currentCount + 1; 
+                document.getElementById('assignmentSubmission').classList.add('underlined'); 
+            }
+        </script>
+        
+        
+        
+    </head>
+    <body>
+        <div class="navbar">
+            <div class="logo">Welcome To VirtuClass</div>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="{% url 'practice_code' %}">PracticeCode</a></li>
+                <li><a href="{% url 'whiteboard' %}">Whiteboard</a></li>
+                <li><a href="{% url 'wellness_resources' %}">Wellness Resources</a></li>
+            </ul>
+        </div>
+        <div class="timetable-section">
+            <h2>Your Timetable</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Course</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in timetable %}
+                    <tr>
+                        <td>{{ entry.day_of_week }}</td>
+                        <td>{{ entry.course.course_name }}</td> 
+                        <td>{{ entry.class_time|time:"H:i" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+       
+      
+        <div class="students">
+            <h2>{{ student.student_name }}</h2>
+            <div class="student1">
+                <div class="student2">
+                    <a href="{% url 'student_info' student_id=student.student_id %}">
+                        <h3>Student Information</h3>
+                    </a>
+                </div>               
+                <div class="student2">
+                    <a href="{% url 'classes' %}?student_id={{ student.student_id}}" class="button"><h3>Classes</h3></a>
+                    </div>
+                <div class="student2">
+                    <a href="{% url 'teachers' %}?student_id={{ student.student_id }}" class="button"><h3>Know Your Teachers</h3></a>
+
+                    </div>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Notifications</h4>
+                    <p>{{ study_material_notification }}</p>
+                    <p>{{ video_upload_notification }}</p> 
+                    <p>{{ assignment_upload_notification }}</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Calendar</h4>                    
+                    <p><a href="{% url 'calendar_page_2022' %}">2022-23</a></p>
+                    <p><a href="{% url 'calendar_page_2023' %}">2023-24</a></p>
+                    <p><a href="{% url 'calendar_2024_25' %}">2024-25</a></p>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Details</h4>
+                    <p>Email: {{ student.email }}</p>
+                    <p>Phone: {{ student_details.parent_contact }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="overlay" id="overlay"></div>
+        <div class="popup" id="popup">
+            <span class="close" onclick="closePopup()">&times;</span>
+            <p>A new assignment has been uploaded.</p>
+        </div>
+    
+    </body>
+    </html>

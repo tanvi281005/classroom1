@@ -1,0 +1,106 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher's Contact</title>
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1e2d3b;
+}
+
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    background-color: rgb(249, 238, 225);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.profile-img img {
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border: 4px solid #1e2d3b;
+    margin-right: 20px;
+}
+
+.profile-info h2 {
+    font-size: 1.5rem;
+    color:#1e2d3b;
+}
+
+.profile-info p {
+    margin-top: 5px;
+    font-size: 1rem;
+    color: #555;
+}
+
+.info-section, .other-section {
+    background-color: rgb(249, 238, 225);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.info-section h3, .other-section h3 {
+    color: #1e2d3b;
+    margin-bottom: 10px;
+    font-size: larger;
+    font-family: "Times New Roman", Times, serif;
+}
+
+table {
+    width: 100%;
+}
+
+table td {
+    padding: 8px 0;
+}
+
+table td:first-child {
+    font-weight: bold;
+    color: #1e2d3b;
+}
+
+.other-section p {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% for teacher in teachers %}
+        <div class="profile-section">
+            
+            <div class="profile-info">
+                <h2>{{ teacher.teacher_name }}</h2>
+                <p><strong>Contact: </strong>{{ teacher.contact }}</p>
+            </div>
+        </div>
+        {% empty %}
+        <p>No teachers found for your courses.</p>
+        {% endfor %}
+    </div>
+</body>
+</html>
+</html>

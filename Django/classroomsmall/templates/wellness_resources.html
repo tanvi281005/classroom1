@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellness Resources</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1c2b35;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            margin: 20px auto;
+            width: 90%;
+            max-width: 1200px;
+        }
+
+        .header {
+            background-color: rgb(249, 238, 225);
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: bold;
+            color: #000;
+            margin: 0;
+        }
+
+        .progress-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .progress-circle {
+            width: 100px;
+            height: 100px;
+            background-color: rgb(249, 238, 225);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-size: 18px;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .progress-circle .progress {
+            stroke: #00b0f0;
+            stroke-width: 10;
+            fill: none;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .wellness-resources {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .wellness-resource-item {
+            background-color: rgb(249, 238, 225);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+
+        .wellness-resource-item:hover {
+            transform: scale(1.02);
+        }
+
+        .thumbnail {
+            width: 100%;
+            height: 150px;
+            background-color: #404040;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #aaa;
+            text-transform: uppercase;
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .content a {
+            color: #000;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        .content a:hover {
+            text-decoration: underline;
+        }
+
+        .content input[type="checkbox"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+        }
+
+        .resource-type {
+            color: #000;
+            font-style: italic;
+            font-size: 14px;
+        }
+
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: #ccc;
+        }
+
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: rgb(249, 238, 225);
+            color: #000000;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #008bb8;
+        }
+    </style>
+    {% load static %}
+</head>
+<body>
+    <div class="header">
+        <h1>Wellness Resources</h1>
+    </div>
+    
+    <div class="container">
+        <div class="progress-container">
+            <svg class="progress-circle" viewBox="0 0 36 36">
+                <path class="progress-bg" d="M18 2a16 16 0 1 1 0 32 16 16 0 1 1 0-32" fill="none" stroke="#eee" stroke-width="3"></path>
+                <path class="progress" d="M18 2a16 16 0 1 1 0 32 16 16 0 1 1 0-32" stroke-dasharray="100" stroke-dashoffset="100"></path>
+                <text x="18" y="20.5" font-size="8" text-anchor="middle" fill="#000">0%</text>
+            </svg>
+        </div>
+
+        <form method="post" oninput="updateProgress()">
+            {% csrf_token %}
+            <ul class="wellness-resources">
+                {% for resource in resources %}
+                    <li class="wellness-resource-item">
+                        <div class="thumbnail">
+                            <img src="{% static 'classroomsmall/' %}{{ resource.resource_name }}.jpg" alt="{{ resource.resource_name }}">
+                        </div>
+                        <div class="content">
+                            <label>
+                                <input type="checkbox" name="visited" value="{{ resource.resource_id }}" 
+                                       {% if resource.resource_id in visited_resource_ids %}checked{% endif %}>
+                                <a href="{{ resource.link }}" target="_blank">{{ resource.resource_name }}</a>
+                            </label>
+                            <span class="resource-type">{{ resource.resource_type }}</span>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            <button type="submit">Save</button>
+        </form>
+        <footer>
+            {{ resources|length }} wellness resources
+        </footer>
+    </div>
+
+    <script>
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const total = checkboxes.length;
+            const percentage = total > 0 ? Math.round((checked / total) * 100) : 0;
+
+            const progressPath = document.querySelector('.progress');
+            const progressText = document.querySelector('.progress-circle text');
+            
+            progressPath.style.strokeDashoffset = 100 - percentage;
+            progressText.textContent = `${percentage}%`;
+        }
+
+        updateProgress();
+    </script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher's Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2b3e50;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: white;
+            font-family: 'Times New Roman', Times, serif;
+            text-align: center;
+        }
+
+        h2 {
+            color: white;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px; 
+        }
+
+        .profile-button, .material-button, .video-button {
+            background-color: rgb(249, 238, 225);
+            color: black;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px; 
+        }
+
+        .subject-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .subject-box {
+            background-color: rgb(249, 238, 225);
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            width: 100%;
+            position: relative;
+            height: auto;
+        }
+
+        .subject-box h2 {
+            color: black;
+        }
+
+        .dropdown {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .dropdown-content {
+            display: none; 
+            margin-top: 10px;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 10px 0;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown.active .arrow {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Teacher's Portal</h1>
+    <h2>Welcome, {{ teacher_name }}!</h2>
+
+    <div class="button-container">
+        <a href="{% url 'study_materials' teacher_id=teacher_id %}" class="material-button">Study Material</a>
+        <a href="{% url 'video_lectures' teacher_id=teacher_id %}" class="video-button">Video Lectures</a>
+        <a href="{% url 'teacherprofile' teacher_id=teacher_id %}" class="profile-button">My Profile</a>
+    </div>
+
+    <h2>My Courses</h2>
+    <div class="subject-container">
+        {% if teachers_with_courses %}
+            {% for teacher_course in teachers_with_courses %}
+                <div class="subject-box">
+                    <h2>{{ teacher_course.course_name }}</h2>
+                    <div class="dropdown">
+                        <span class="course-id">Course ID: {{ teacher_course.course_id }}</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="dropdown-content">
+                        <a href="{% url 'assignments' course_id=teacher_course.course_id %}">Assignments</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No courses have been assigned to you yet!</p>
+        {% endif %}
+    </div>
+
+    <script>
+        const dropdowns = document.querySelectorAll('.dropdown');
+
+        dropdowns.forEach(dropdown => {
+            dropdown.addEventListener('click', () => {
+                const content = dropdown.nextElementSibling;
+                const isActive = dropdown.classList.toggle('active');
+
+                if (isActive) {
+                    content.style.display = 'block'; 
+                } else {
+                    content.style.display = 'none'; 
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
